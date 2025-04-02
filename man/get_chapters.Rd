@@ -16,7 +16,7 @@ get_chapters(
 \item{html_page}{The file path of the rendered index.html file. It can be a url}
 
 \item{base_url}{The base url of where the chapters are published -- the url to provide to the iframe in Leanpub
-e.g. https://jhudatascience.org/OTTR_Template/coursera}
+e.g. https://ottrproject.org/OTTR_Template/coursera}
 }
 \value{
 A data.frame of the chapter urls and their titles that are to be ported to Leanpub.

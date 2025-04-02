@@ -18,7 +18,7 @@
 #' @importFrom tidyr unnest separate
 #' @importFrom readr write_tsv
 #'
-#' @examples \dontrun {
+#' @examples \dontrun{
 #'
 #' rmd_dir <- setup_ottr_template(dir = ".", type = "rmd", render = FALSE)
 #'

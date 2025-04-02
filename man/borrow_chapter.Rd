@@ -22,8 +22,8 @@ you would like to include in the current document. e.g "docs/intro.md" or
 "intro.md"}
 
 \item{repo_name}{A character vector indicating the repo name of where you are
- borrowing from. e.g. "jhudsl/OTTR_Template/".
-For a Wiki of a repo, use "wiki/jhudsl/OTTR_Template/"
+ borrowing from. e.g. "ottrproject/OTTR_Template/".
+For a Wiki of a repo, use "wiki/ottrproject/OTTR_Template/"
 If nothing is provided, will look for local file.}
 
 \item{remove_h1}{If TRUE Remove all h1 headers.}
@@ -66,7 +66,7 @@ Rmd from another repository knitted into the Rmd.
 # ```{r, echo=FALSE, results='asis'}
 borrow_chapter(
   doc_path = "docs/02-chapter_of_course.md",
-  repo_name = "jhudsl/OTTR_Template"
+  repo_name = "ottrproject/OTTR_Template"
 )
 # ```
 

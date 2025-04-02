@@ -8,7 +8,7 @@ get_repo_info(repo_name, token = NULL, verbose = FALSE)
 }
 \arguments{
 \item{repo_name}{The full name of the repo to get bookdown chapters from.
-e.g. "jhudsl/OTTR_Template"}
+e.g. "ottrproject/OTTR_Template"}
 
 \item{token}{If private repositories are to be retrieved, a github personal
 access token needs to be supplied. If none is supplied, then this will attempt to

@@ -52,10 +52,10 @@ ottrfy <- function(path = ".", type = "rmd", overwrite = FALSE) {
   )
 
   base_url <- switch(type,
-    rmd = "https://raw.githubusercontent.com/jhudsl/OTTR_Template/refs/heads/main/",
-    quarto = "https://raw.githubusercontent.com/fhdsl/OTTR_Quarto/refs/heads/main/",
-    rmd_web = "https://raw.githubusercontent.com/jhudsl/OTTR_Template_Website/refs/heads/main/",
-    quarto_web = "https://raw.githubusercontent.com/fhdsl/OTTR_Quarto_Website/refs/heads/main/"
+    rmd = "https://raw.githubusercontent.com/ottrproject/OTTR_Template/refs/heads/main/",
+    quarto = "https://raw.githubusercontent.com/ottrproject/OTTR_Quarto/refs/heads/main/",
+    rmd_web = "https://raw.githubusercontent.com/ottrproject/OTTR_Template_Website/refs/heads/main/",
+    quarto_web = "https://raw.githubusercontent.com/ottrproject/OTTR_Quarto_Website/refs/heads/main/"
   )
 
   all_files_needed <- c(always_needed_files, special_files)

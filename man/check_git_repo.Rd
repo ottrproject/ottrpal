@@ -13,7 +13,7 @@ check_git_repo(
 )
 }
 \arguments{
-\item{repo_name}{the name of the repository, e.g. jhudsl/OTTR_Template}
+\item{repo_name}{the name of the repository, e.g. ottrproject/OTTR_Template}
 
 \item{token}{A personal access token from GitHub. Only necessary if the
 repository being checked is a private repository.}
@@ -37,6 +37,6 @@ Given a repository name, check with git ls-remote whether the repository exists 
 \dontrun{
 
 authorize("github")
-check_git_repo("jhudsl/OTTR_Template")
+check_git_repo("ottrproject/OTTR_Template")
 }
 }

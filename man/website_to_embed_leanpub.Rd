@@ -35,7 +35,7 @@ If no image column supplied, default image used.}
 \item{html_page}{The file path of the rendered index.html file}
 
 \item{base_url}{The base url of where the chapters are published -- the url to provide to the iframe in Leanpub
-e.g. https://jhudatascience.org/OTTR_Template/coursera}
+e.g. https://ottrproject.org/OTTR_Template/coursera}
 
 \item{clean_up}{Should the previous docs and manuscript folder be cleaned up?}
 
@@ -71,7 +71,7 @@ Convert Website Course to Leanpub
 \dontrun{
 
 ottrpal::website_to_embed_leanpub(
-  base_url = "https://jhudatascience.org/OTTR_Template/",
+  base_url = "https://ottrproject.org/OTTR_Template/",
   make_book_txt = TRUE,
   quiz_dir = NULL
 )

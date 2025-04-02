@@ -23,7 +23,7 @@ option_list <- list(
     c("--repo"),
     type = "character",
     default = NULL,
-    help = "GitHub repository name, e.g. jhudsl/OTTR_Template",
+    help = "GitHub repository name, e.g. ottrproject/OTTR_Template",
   ),
   optparse::make_option(
     c("--git_pat"),

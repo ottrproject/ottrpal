@@ -34,7 +34,7 @@ get_github <- function(token = NULL, url) {
 #'
 #' Given an repository on GitHub, retrieve the pages URL for it.
 #'
-#' @param repo_name The full name of the repo to get chapters from. e.g. 'jhudsl/OTTR_Template'
+#' @param repo_name The full name of the repo to get chapters from. e.g. 'ottrproject/OTTR_Template'
 #' @param token If private repositories are to be retrieved, a github personal
 #' access token needs to be supplied. Run `authorize("github")` to set this.
 #' @param verbose TRUE/FALSE do you want more progress messages?
@@ -112,7 +112,7 @@ get_pages_url <- function(repo_name,
 #' GitHub API and read it into R.
 #'
 #' @param repo_name The full name of the repo to get bookdown chapters from.
-#' e.g. "jhudsl/OTTR_Template"
+#' e.g. "ottrproject/OTTR_Template"
 #' @param token If private repositories are to be retrieved, a github personal
 #' access token needs to be supplied. If none is supplied, then this will attempt to
 #' grab from a git pat set in the environment with usethis::create_github_token().
@@ -186,7 +186,7 @@ get_repo_info <- function(repo_name,
 #'
 #' Given a repository name, check with git ls-remote whether the repository exists and return a TRUE/FALSE
 #'
-#' @param repo_name the name of the repository, e.g. jhudsl/OTTR_Template
+#' @param repo_name the name of the repository, e.g. ottrproject/OTTR_Template
 #' @param token A personal access token from GitHub. Only necessary if the
 #' repository being checked is a private repository.
 #' @param silent TRUE/FALSE of whether the warning from the git ls-remote
@@ -203,7 +203,7 @@ get_repo_info <- function(repo_name,
 #' @examples \dontrun{
 #'
 #' authorize("github")
-#' check_git_repo("jhudsl/OTTR_Template")
+#' check_git_repo("ottrproject/OTTR_Template")
 #' }
 check_git_repo <- function(repo_name,
                            token = NULL,
@@ -262,7 +262,7 @@ check_git_repo <- function(repo_name,
 #' Given text and repository name, find if an issue exists.
 #'
 #' @param text What text to be searched for in the GitHub issues. Can be regex.
-#' @param repo_name the name of the repository, e.g. jhudsl/OTTR_Template
+#' @param repo_name the name of the repository, e.g. ottrproject/OTTR_Template
 #' @param token A personal access token from GitHub. Only necessary if the
 #' repository being checked is a private repository.
 #'
@@ -274,7 +274,7 @@ check_git_repo <- function(repo_name,
 #'
 #' authorize("github")
 #'
-#' find_issue(text = "TEST", repo_name = "jhudsl/ottrpal")
+#' find_issue(text = "TEST", repo_name = "ottrproject/ottrpal")
 #' }
 find_issue <- function(text, repo_name, token = NULL) {
   if (!is.character(repo_name)) {
