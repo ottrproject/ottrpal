@@ -18,10 +18,10 @@ setup_ottr_template <- function(dir = ".", type, render = TRUE) {
   }
 
   url <- switch(type,
-    rmd = "https://github.com/jhudsl/OTTR_Template/archive/refs/heads/main.zip",
-    quarto = "https://github.com/fhdsl/OTTR_Quarto/archive/refs/heads/main.zip",
-    rmd_website = "https://github.com/jhudsl/OTTR_Template_Website/archive/refs/heads/main.zip",
-    quarto_website = "https://github.com/fhdsl/OTTR_Quarto_Website/archive/refs/heads/main.zip"
+    rmd = "https://github.com/ottrproject/OTTR_Template/archive/refs/heads/main.zip",
+    quarto = "https://github.com/ottrproject/OTTR_Quarto/archive/refs/heads/main.zip",
+    rmd_website = "https://github.com/ottrproject/OTTR_Template_Website/archive/refs/heads/main.zip",
+    quarto_website = "https://github.com/ottrproject/OTTR_Quarto_Website/archive/refs/heads/main.zip"
   )
 
   file_name <- switch(type,

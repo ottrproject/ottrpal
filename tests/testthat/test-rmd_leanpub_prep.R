@@ -8,11 +8,11 @@ test_that("Get base URL", {
                    in_test = FALSE
   )
   ### Now run functions we will test
-  base_url <- get_pages_url(repo_name = "jhudsl/OTTR_Template",
+  base_url <- get_pages_url(repo_name = "ottrproject/OTTR_Template",
                             git_pat = Sys.getenv("secrets.GH_PAT"))
 
   # TODO: Test that the URL can
-  testthat::expect_true(base_url == "https://jhudatascience.org/OTTR_Template/")
+  testthat::expect_true(base_url == "https://ottrproject.org/OTTR_Template/")
 })
 
 test_that("Get chapters", {
@@ -30,7 +30,7 @@ test_that("Make screenshots", {
   testthat::skip_on_cran()
   # We want to make screenshots from the course
   chapt_df_file <- make_screenshots(git_pat = Sys.getenv("secrets.GH_PAT"),
-                                    repo = "jhudsl/OTTR_Template",
+                                    repo = "ottrproject/OTTR_Template",
                                     path = "OTTR_Template-main")
 
   testthat::expect_equal(chapt_df_file, "resources/chapt_screen_images/chapter_urls.tsv")
@@ -75,7 +75,7 @@ test_that("Set Up Leanpub", {
   testthat::expect_true(any(grepl("poster:resources/chapt_screen_images/introduction.png", intro)))
 
   # Make sure we link to the page
-  testthat::expect_true(any(grepl("![](https://jhudatascience.org/OTTR_Template/introduction.html)", intro, fixed = TRUE)))
+  testthat::expect_true(any(grepl("![](https://ottrproject.org/OTTR_Template/introduction.html)", intro, fixed = TRUE)))
 
   clean_up()
 })

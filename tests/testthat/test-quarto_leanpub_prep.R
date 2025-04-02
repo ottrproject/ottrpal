@@ -8,11 +8,11 @@ test_that("Get base URL - Quarto", {
                    in_test = FALSE
   )
   ### Now run functions we will test
-  base_url <- get_pages_url(repo_name = "fhdsl/OTTR_Quarto",
+  base_url <- get_pages_url(repo_name = "ottrproject/OTTR_Quarto",
                             git_pat = Sys.getenv("secrets.GH_PAT"))
 
   # TODO: Test that the URL can
-  testthat::expect_true(base_url == "https://hutchdatascience.org/OTTR_Quarto/")
+  testthat::expect_true(base_url == "https://ottrproject.org/OTTR_Quarto/")
 })
 
 test_that("Get chapters - Quarto", {
@@ -30,7 +30,7 @@ test_that("Make screenshots - Quarto", {
   testthat::skip_on_cran()
   # We want to make screenshots from the course
   chapt_df_file <- make_screenshots(git_pat = Sys.getenv("secrets.GH_PAT"),
-                                    repo = "fhdsl/OTTR_Quarto",
+                                    repo = "ottrproject/OTTR_Quarto",
                                     path = "OTTR_Quarto-main")
 
   testthat::expect_equal(chapt_df_file, "resources/chapt_screen_images/chapter_urls.tsv")
@@ -46,7 +46,7 @@ test_that("Make screenshots - Quarto", {
   testthat::expect_number(nrow(chapt_df), 5)
 })
 
-test_that("Set Up Leanpub - fhdsl/OTTR_Quarto", {
+test_that("Set Up Leanpub - ottrproject/OTTR_Quarto", {
   testthat::skip_on_cran()
   dir <- setup_ottr_template(dir = ".", type = "quarto")
 
@@ -75,7 +75,7 @@ test_that("Set Up Leanpub - fhdsl/OTTR_Quarto", {
   testthat::expect_true(any(grepl("poster:resources/chapt_screen_images/introduction.png", intro)))
 
   # Make sure we link to the page
-  testthat::expect_true(any(grepl("![](https://hutchdatascience.org/OTTR_Quarto/intro.html)", intro, fixed = TRUE)))
+  testthat::expect_true(any(grepl("![](https://ottrproject.org/OTTR_Quarto/intro.html)", intro, fixed = TRUE)))
 
   clean_up()
 })

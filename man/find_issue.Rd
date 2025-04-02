@@ -9,7 +9,7 @@ find_issue(text, repo_name, token = NULL)
 \arguments{
 \item{text}{What text to be searched for in the GitHub issues. Can be regex.}
 
-\item{repo_name}{the name of the repository, e.g. jhudsl/OTTR_Template}
+\item{repo_name}{the name of the repository, e.g. ottrproject/OTTR_Template}
 
 \item{token}{A personal access token from GitHub. Only necessary if the
 repository being checked is a private repository.}
@@ -25,6 +25,6 @@ Given text and repository name, find if an issue exists.
 
 authorize("github")
 
-find_issue(text = "TEST", repo_name = "jhudsl/ottrpal")
+find_issue(text = "TEST", repo_name = "ottrproject/ottrpal")
 }
 }

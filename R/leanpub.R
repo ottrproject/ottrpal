@@ -9,7 +9,7 @@
 #' @param clean_up Should the previous docs and manuscript folder be cleaned up?
 #' @param html_page The file path of the rendered index.html file
 #' @param base_url The base url of where the chapters are published -- the url to provide to the iframe in Leanpub
-#' e.g. https://jhudatascience.org/OTTR_Template/coursera
+#' e.g. https://ottrproject.org/OTTR_Template/coursera
 #' @param html_page The file path of the rendered index.html file
 #' @param default_img A google slide link to the default image to be used for all chapters
 #' @param output_dir output directory to put files.  It should likely be
@@ -34,7 +34,7 @@
 #' @examples \dontrun{
 #'
 #' ottrpal::website_to_embed_leanpub(
-#'   base_url = "https://jhudatascience.org/OTTR_Template/",
+#'   base_url = "https://ottrproject.org/OTTR_Template/",
 #'   make_book_txt = TRUE,
 #'   quiz_dir = NULL
 #' )
@@ -260,7 +260,7 @@ make_embed_markdown <- function(path = ".",
 #' @param path path to the bookdown or quarto course repository, must have a `_bookdown.yml` or `_quarto.yml` file
 #' @param html_page The file path of the rendered index.html file. It can be a url
 #' @param base_url The base url of where the chapters are published -- the url to provide to the iframe in Leanpub
-#' e.g. https://jhudatascience.org/OTTR_Template/coursera
+#' e.g. https://ottrproject.org/OTTR_Template/coursera
 #'
 #' @return A data.frame of the chapter urls and their titles that are to be ported to Leanpub.
 #' This can be passed to
@@ -327,7 +327,7 @@ get_chapters <- function(path = ".",
 #'
 #' @param path path to the bookdown or quarto course repository, must have a `_bookdown.yml` or `_quarto.yml` file
 #' @param token required argument; a Git secret -- see https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens for more info
-#' @param repo required argument; GitHub repository name, e.g., jhudsl/OTTR_Template
+#' @param repo required argument; GitHub repository name, e.g., ottrproject/OTTR_Template
 #' @param output_dir default is "resources/chapt_screen_images"; Output directory where the chapter's screen images should be stored. For OTTR courses, don't change this unless you've changed the downstream functions accordingly.
 #' @param base_url default is NULL; rendered bookdown URL where screenshots are taken from, if NULL, the function will use the repo_name and and token to find the base_url
 #' @param path default is to look for OTTR files in current directory based on existence of .github. But if you'd like to run this in a different path, you can point to that file path.
@@ -346,7 +346,7 @@ get_chapters <- function(path = ".",
 #'
 #' make_screenshots(
 #'   token = Sys.getenv("secrets.GH_PAT"),
-#'   repo = "jhudsl/OTTR_Template"
+#'   repo = "ottrproject/OTTR_Template"
 #' )
 #' }
 make_screenshots <- function(path = ".",

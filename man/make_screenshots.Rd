@@ -17,7 +17,7 @@ make_screenshots(
 
 \item{token}{required argument; a Git secret -- see https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens for more info}
 
-\item{repo}{required argument; GitHub repository name, e.g., jhudsl/OTTR_Template}
+\item{repo}{required argument; GitHub repository name, e.g., ottrproject/OTTR_Template}
 
 \item{output_dir}{default is "resources/chapt_screen_images"; Output directory where the chapter's screen images should be stored. For OTTR courses, don't change this unless you've changed the downstream functions accordingly.}
 
@@ -34,7 +34,7 @@ This function creates screenshots of course chapters that are stored in a create
 
 make_screenshots(
   token = Sys.getenv("secrets.GH_PAT"),
-  repo = "jhudsl/OTTR_Template"
+  repo = "ottrproject/OTTR_Template"
 )
 }
 }
