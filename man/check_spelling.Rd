@@ -32,7 +32,7 @@ A file will be saved that lists the broken URLs will be saved to the specified o
 Check spelling of all md, rmd, and qmd files
 }
 \examples{
-\dontrun {
+\dontrun{
 
 rmd_dir <- setup_ottr_template(dir = ".", type = "rmd", render = FALSE)
 
