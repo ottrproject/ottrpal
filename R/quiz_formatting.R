@@ -72,7 +72,7 @@ check_quiz_dir <- function(path = ".",
     quiz_errors <- data.frame()
 
     # Print out how many quiz check errors
-    write("1", stdout())
+    write("0", stdout())
   }
 
   # Save question errors to file
@@ -920,7 +920,7 @@ check_question <- function(question_df, quiz_name = NA, verbose = TRUE, ignore_c
 #' }
 check_quizzes <- function(path = ".",
                           quiz_dir = "quizzes",
-                          write_report = FALSE,
+                          write_report = TRUE,
                           verbose = TRUE,
                           ignore_coursera = TRUE) {
   files <- list.files(
