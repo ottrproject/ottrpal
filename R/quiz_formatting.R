@@ -920,7 +920,7 @@ check_question <- function(question_df, quiz_name = NA, verbose = TRUE, ignore_c
 #' }
 check_quizzes <- function(path = ".",
                           quiz_dir = "quizzes",
-                          write_report = TRUE,
+                          write_report = FALSE,
                           verbose = TRUE,
                           ignore_coursera = TRUE) {
   files <- list.files(
