@@ -105,10 +105,10 @@
 </div>
 </div>
 <div class="section level1">
-<h1 id="using-ottrpal-through-docker">Using ottrpal through docker<a class="anchor" aria-label="anchor" href="#using-ottrpal-through-docker"></a>
+<h1 id="using-ottrpal-through-docker">Using ottrpal through Docker<a class="anchor" aria-label="anchor" href="#using-ottrpal-through-docker"></a>
 </h1>
-<p>There are a few options at this time. The ottrpal docker image will execute at the mount location so you can either have your working directory and use the commands below <em>or</em> you can point your volume to your specific OTTR repo by replacing <code>$PWD</code> with the relative file path tot the top of your directory (what should contain the <code>index.Rmd</code> or <code>index.qmd</code> etc).</p>
-<p>Using the executable docker image works like this:</p>
+<p>There are a few options at this time. The <a href="https://github.com/ottrproject/ottr-docker" class="external-link">ottrpal Docker image</a> will execute at the mount location so you can either have your working directory and use the commands below <em>or</em> you can point your volume to your specific OTTR repo by replacing <code>$PWD</code> with the relative file path tot the top of your directory (what should contain the <code>index.Rmd</code> or <code>index.qmd</code> etc).</p>
+<p>Using the executable Docker image works like this:</p>
 <pre><code>docker run -v $PWD:/home jhudsl/ottrpal:dev command_of_choice</code></pre>
 <p>You can run checks: “spelling”, “urls”, “quiz_format” by putting one of these options in there</p>
 <pre><code>docker run -v $PWD:/home jhudsl/ottrpal:dev spelling</code></pre>
