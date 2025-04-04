@@ -32,11 +32,11 @@ if (!("remotes" %in% installed.packages())) {
 remotes::install_github("ottrproject/ottrpal")
 ```
 
-# Using ottrpal through docker 
+# Using ottrpal through Docker 
 
-There are a few options at this time. The ottrpal docker image will execute at the mount location so you can either have your working directory and use the commands below *or* you can point your volume to your specific OTTR repo by replacing `$PWD` with the relative file path tot the top of your directory (what should contain the `index.Rmd` or `index.qmd` etc). 
+There are a few options at this time. The [ottrpal Docker image](https://github.com/ottrproject/ottr-docker) will execute at the mount location so you can either have your working directory and use the commands below *or* you can point your volume to your specific OTTR repo by replacing `$PWD` with the relative file path tot the top of your directory (what should contain the `index.Rmd` or `index.qmd` etc). 
 
-Using the executable docker image works like this: 
+Using the executable Docker image works like this: 
 ```
 docker run -v $PWD:/home jhudsl/ottrpal:dev command_of_choice
 ```
