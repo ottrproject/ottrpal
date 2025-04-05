@@ -27,8 +27,8 @@ utils::globalVariables(c(
 #'
 course_path <- function(path = ".") {
   # Find .git root directory
-  is_ottr_root <- has_file("_bookdown.yml") | has_file("_output.yml") |
-    has_file("_quarto.yml") | has_file("_output.yml") | has_file("README.md")
+  is_ottr_root <- rprojroot::has_file("_bookdown.yml") | rprojroot::has_file("_output.yml") |
+    rprojroot::has_file("_quarto.yml") | rprojroot::has_file("_output.yml") | rprojroot::has_file("README.md")
 
   root_dir <- rprojroot::find_root(is_ottr_root, path = path)
 
