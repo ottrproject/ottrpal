@@ -1,7 +1,7 @@
 if (Sys.getenv("GH_PAT") != "") {
 
 test_that("Get base URL - Quarto", {
-  testthat::skip_on_cran()
+  
   # Authorize GitHub
   auth_from_secret("github",
                    token = Sys.getenv("GH_PAT"),
