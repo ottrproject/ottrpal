@@ -21,16 +21,16 @@ utils::globalVariables(c(
 #' Find root of OTTR course provided
 #' @param path Where should we be looking for a OTTR course. By default will look in current working directory.
 #' @return Absolute file path to the course pointed to
-#' @importFrom rprojroot find_root has_dir
+#' @importFrom rprojroot find_root has_dir has_file
 #' @return Returns a absolute file path to where the course is
 #' @export
 #'
 course_path <- function(path = ".") {
   # Find .git root directory
-  root_dir <- rprojroot::find_root(
-    rprojroot::has_file_pattern("_bookdown.yml|_site.yml|_quarto.yml|_output.yml"), path = path)
+  is_ottr_root <- has_file("_bookdown.yml") | has_file("_output.yml") |
+    has_file("_quarto.yml") | has_file("_output.yml") | has_file("README.md")
 
-  if (bookdown & quarto) stop("No OTTR course found in this repository. Looking for a _bookdown.yml or _quarto.yml file.")
+  root_dir <- rprojroot::find_root(is_ottr_root, path = path)
 
   return(root_dir)
 }
