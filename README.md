@@ -31,3 +31,20 @@ if (!("remotes" %in% installed.packages())) {
 }
 remotes::install_github("ottrproject/ottrpal")
 ```
+
+# Using ottrpal through Docker 
+
+There are a few options at this time. The [ottrpal Docker image](https://github.com/ottrproject/ottr-docker) will execute at the mount location so you can either have your working directory and use the commands below *or* you can point your volume to your specific OTTR repo by replacing `$PWD` with the relative file path tot the top of your directory (what should contain the `index.Rmd` or `index.qmd` etc). 
+
+Using the executable Docker image works like this: 
+```
+docker run -v $PWD:/home jhudsl/ottrpal:dev command_of_choice
+```
+You can run checks: "spelling", "urls", "quiz_format" by putting one of these options in there
+```
+docker run -v $PWD:/home jhudsl/ottrpal:dev spelling
+```
+Or you can render OTTR websites using "rmd", "quarto", "quarto_web", or "rmd_web"
+```
+docker run -v $PWD:/home jhudsl/ottrpal:dev rmd
+```
