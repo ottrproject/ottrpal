@@ -58,27 +58,31 @@ check_quiz_dir <- function(path = ".",
   ignore_urls_file <- file.path(resources_dir, "ignore-urls.txt")
   exclude_file <- file.path(resources_dir, "exclude_files.txt")
 
-  ottrpal::check_quizzes(quiz_dir = file.path(root_dir, quiz_dir), write_report = TRUE, verbose = TRUE)
+  quiz_df <- ottrpal::check_quizzes(
+    quiz_dir = file.path(root_dir, quiz_dir),
+    write_report = TRUE,
+    verbose = TRUE)
 
-  if (file.exists("question_error_report.tsv")) {
-    quiz_errors <- readr::read_tsv("question_error_report.tsv")
-
+  if (nrow(quiz_df) > 0) {
     file.copy("question_error_report.tsv", file.path(root_dir, "check_reports"))
     file.remove("question_error_report.tsv")
 
     # Print out how many quiz check errors
     write(nrow(quiz_errors), stdout())
-  } else {
-    quiz_errors <- data.frame()
 
-    # Print out how many quiz check errors
-    write("1", stdout())
+    message(paste0("Errors listed and saved to: ", output_file))
+
+  } else {
+    # Make empty dataframe
+    quiz_df <- data.frame()
+
+    message("No quiz format errors! :) ")
   }
 
-  # Save question errors to file
-  readr::write_tsv(quiz_errors, output_file)
+  # Print out how many spell check errors
+  write(nrow(quiz_df), stdout())
 
-  message(paste0("Saved to: ", output_file))
+  return(as.numeric(nrow(quiz_df)))
 }
 
 

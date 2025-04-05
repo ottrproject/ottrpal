@@ -80,8 +80,13 @@ check_spelling <- function(path = ".",
           data.frame() %>%
           tidyr::unnest(cols = found) %>%
           tidyr::separate(found, into = c("file", "lines"), sep = ":")
+          # Save spell errors to file temporarily
+          readr::write_tsv(output_file)
+
+          message(paste0("Errors listed and saved to: ", output_file))
       } else {
-        sp_errors <- data.frame(errors = NA)
+        sp_errors <- data.frame()
+        message("No spelling errors! :) ")
       }
     },
     error = function(e) {
@@ -91,11 +96,6 @@ check_spelling <- function(path = ".",
 
   # Print out how many spell check errors
   write(nrow(sp_errors), stdout())
-
-  # Save spell errors to file temporarily
-  readr::write_tsv(sp_errors, output_file)
-
-  message(paste0("Saved to: ", output_file))
 
   return(as.numeric(nrow(sp_errors)))
 }
