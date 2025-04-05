@@ -1,5 +1,5 @@
 test_that("Borrow chapter", {
-  testthat::skip_on_cran()
+  testthat::skip_if_offline()
   parent_doc <- list.files(
     pattern = "parent_doc.Rmd$",
     recursive = TRUE,
