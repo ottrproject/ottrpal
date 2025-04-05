@@ -35,7 +35,7 @@ check_spelling <- function(path = ".",
                            resources_dir = "resources",
                            file_pattern = "md$") {
   # Find .git root directory
-  root_dir <- rprojroot::find_root(path = path, rprojroot::has_dir(".github"))
+  root_dir <- course_path(path = path)
 
   resources_dir <- file.path(root_dir, resources_dir)
   output_dir <- file.path(root_dir, output_dir)
