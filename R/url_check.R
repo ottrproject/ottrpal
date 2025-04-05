@@ -75,23 +75,34 @@ check_urls <- function(path = ".",
   # Write the file
   all_urls_df <- dplyr::bind_rows(all_urls)
 
-  if (nrow(all_urls_df) > 0) {
-    if (!report_all) {
-      all_urls_df <- all_urls_df %>%
-        dplyr::filter(urls_status == "failed") %>%
-        readr::write_tsv(output_file)
-    }
+  error_count <- all_urls_df %>%
+    dplyr::filter(urls_status == "failed") %>%
+    dplyr::count() %>%
+    dplyr::pull(n)
+
+  # We will write a report if report_all is TRUE or if there are errors
+   if (report_all || error_count > 0) {
+
+     # If report all, then we won't filter out failed
+     if (!report_all) {
+       all_urls_df <- dplyr::filter(all_urls_df, urls_status == "failed")
+
+       message(paste0("URLs tested saved to: ", output_file))
+     } else {
+       message(paste0("Errors listed and saved to: ", output_file))
+     }
+     # save
+     readr::write_tsv(all_urls_df, output_file)
+     message(paste0("URLs listed and saved to: ", output_file))
+
   } else {
-    all_urls_df <- data.frame(errors = NA)
+    all_urls_df <- data.frame()
+
+    message("No URL errors! :) ")
   }
 
   # Print out how many spell check errors
   write(nrow(all_urls_df), stdout())
-
-  # Save spell errors to file temporarily
-  readr::write_tsv(all_urls_df, output_file)
-
-  message(paste0("Saved to: ", output_file))
 
   return(nrow(all_urls_df))
 }

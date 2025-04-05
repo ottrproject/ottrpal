@@ -1,0 +1,3 @@
+question_names	quiz	warning_msg	related_index
+What if we don't put a correct answer	quiz_bad.md	No correct answers provided for What if we don't put ... in quiz: quiz_bad.md	31
+What if only give correct answers?	quiz_bad.md	No incorrect answer options provided for What if only give co ... in quiz: quiz_bad.md	38
