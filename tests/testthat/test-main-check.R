@@ -1,7 +1,5 @@
 test_that("Test Checks overall", {
 
-  testthat::skip_if_offline()
-
   rmd_dir <- setup_ottr_template(type = "rmd", render = FALSE)
 
   ottr_check(path = rmd_dir, check_type = "urls")

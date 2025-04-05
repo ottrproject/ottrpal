@@ -2,7 +2,7 @@
 output_file <- file.path("check_reports", "spell_check_results.tsv")
 
 test_that("Test spell checks for OTTR main", {
-  testthat::skip_on_cran()
+  
   rmd_dir <- setup_ottr_template(type = "rmd", render = FALSE)
 
   # Add in a spelling error
