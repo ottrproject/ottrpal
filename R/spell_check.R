@@ -79,7 +79,7 @@ check_spelling <- function(path = ".",
         sp_errors <- sp_errors %>%
           data.frame() %>%
           tidyr::unnest(cols = found) %>%
-          tidyr::separate(found, into = c("file", "lines"), sep = ":")
+          tidyr::separate(found, into = c("file", "lines"), sep = ":") %>%
           # Save spell errors to file temporarily
           readr::write_tsv(output_file)
 
