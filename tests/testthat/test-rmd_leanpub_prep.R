@@ -1,7 +1,7 @@
 if (Sys.getenv("GH_PAT") != "") {
 
 test_that("Get base URL", {
-  
+
   # Authorize GitHub
   auth_from_secret("github",
                    token = Sys.getenv("GH_PAT"),
@@ -9,27 +9,27 @@ test_that("Get base URL", {
   )
   ### Now run functions we will test
   base_url <- get_pages_url(repo_name = "ottrproject/OTTR_Template",
-                            git_pat = Sys.getenv("secrets.GH_PAT"))
+                            token = Sys.getenv("GH_PAT"))
 
   # TODO: Test that the URL can
   testthat::expect_true(base_url == "https://ottrproject.org/OTTR_Template/")
 })
 
 test_that("Get chapters", {
-  
   ### Set up the OTTR repo
   dir <- setup_ottr_template(dir = ".", type = "rmd")
 
-  chapt_df <- get_chapters(html_page = file.path("OTTR_Template-main", "docs", "index.html"))
+  chapt_df <- get_chapters(path = "OTTR_Template-main",
+                           html_page = file.path("docs", "index.html"))
 
   testthat::expect_named(chapt_df, c("url", "chapt_title"))
 
 })
 
 test_that("Make screenshots", {
-  
+
   # We want to make screenshots from the course
-  chapt_df_file <- make_screenshots(git_pat = Sys.getenv("secrets.GH_PAT"),
+  chapt_df_file <- make_screenshots(token = Sys.getenv("GH_PAT"),
                                     repo = "ottrproject/OTTR_Template",
                                     path = "OTTR_Template-main")
 
@@ -47,7 +47,7 @@ test_that("Make screenshots", {
 })
 
 test_that("Set Up Leanpub", {
-  
+
   dir <- setup_ottr_template(dir = ".", type = "rmd")
 
   # We're going to delete this so we can test making it again
