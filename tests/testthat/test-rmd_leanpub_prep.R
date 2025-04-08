@@ -33,7 +33,7 @@ test_that("Make screenshots", {
                                     repo = "ottrproject/OTTR_Template",
                                     path = "OTTR_Template-main")
 
-  testthat::expect_equal(chapt_df_file, "resources/chapt_screen_images/chapter_urls.tsv")
+  testthat::expect_equal(chapt_df_file, "OTTR_Template-main/resources/chapt_screen_images/chapter_urls.tsv")
 
   chapt_df <- readr::read_tsv(file.path("OTTR_Template-main",
                                         "resources",
@@ -55,7 +55,9 @@ test_that("Set Up Leanpub", {
   # Now run the iframe maker bit
   website_to_embed_leanpub(
     path = dir,
-    chapt_img_key = file.path('resources', 'chapt_screen_images', 'chapter_urls.tsv'),
+    chapt_img_key = file.path('resources',
+                              'chapt_screen_images',
+                              'chapter_urls.tsv'),
     make_book_txt = TRUE,
     quiz_dir = NULL,
     output_dir = "manuscript")
