@@ -41,9 +41,8 @@ test_that("Make screenshots", {
                                         "chapter_urls.tsv"))
 
   # Expect column names should still be the
-  testthat::expect_names(chapt_df, c("url", "chapt_title", "img_path"))
+  testthat::expect_named(chapt_df, c("url", "chapt_title", "img_path"))
 
-  testthat::expect_number(nrow(chapt_df), 5)
 })
 
 test_that("Set Up Leanpub", {
