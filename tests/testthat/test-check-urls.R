@@ -12,8 +12,8 @@ test_that("Test URL checks for OTTR main", {
    testthat::expect_true(status > 0)
 
    # Make sure the report exists
-   testthat::expect_true(file.exists(file.path(rmd_dir, output_file)))
-   results <- readr::read_tsv(file.path(rmd_dir, output_file))
+   testthat::expect_true(file.exists(file.path(rmd_dir, "check_reports", "url_checks.tsv")))
+   results <- readr::read_tsv(file.path(rmd_dir, "check_reports", "url_checks.tsv"))
 
    # It should be a data.frame
    testthat::expect_true(is.data.frame(results))
@@ -32,8 +32,8 @@ test_that("Test URL checks for OTTR Quarto main", {
    testthat::expect_true(status > 0)
 
    # Make sure the report exists
-   testthat::expect_true(file.exists(file.path(qmd_dir, output_file)))
-   results <- readr::read_tsv(file.path(qmd_dir, output_file))
+   testthat::expect_true(file.exists(file.path(qmd_dir,"check_reports", "url_checks.tsv")))
+   results <- readr::read_tsv(file.path(qmd_dir, "check_reports", "url_checks.tsv"))
 
    # It should be a data.frame
    testthat::expect_true(is.data.frame(results))
@@ -41,7 +41,6 @@ test_that("Test URL checks for OTTR Quarto main", {
 })
 
 test_that("Test URL checks for OTTR web", {
-
 
    rmd_web <- setup_ottr_template(type = "rmd_website", render = FALSE)
 
@@ -52,8 +51,8 @@ test_that("Test URL checks for OTTR web", {
    testthat::expect_true(status > 0)
 
    # Make sure the report exists
-   testthat::expect_true(file.exists(file.path(rmd_web, output_file)))
-   results <- readr::read_tsv(file.path(rmd_web, output_file))
+   testthat::expect_true(file.exists(file.path(rmd_web, "check_reports", "url_checks.tsv")))
+   results <- readr::read_tsv(file.path(rmd_web, "check_reports", "url_checks.tsv"))
 
    # It should be a data.frame
    testthat::expect_true(is.data.frame(results))
@@ -72,8 +71,8 @@ test_that("Test URL checks for OTTR Quarto web", {
    testthat::expect_true(status > 0)
 
    # Make sure the report exists
-   testthat::expect_true(file.exists(file.path(qmd_web, output_file)))
-   results <- readr::read_tsv(file.path(qmd_web, output_file))
+   testthat::expect_true(file.exists(file.path(qmd_web, "check_reports", "url_checks.tsv")))
+   results <- readr::read_tsv(file.path(qmd_web, "check_reports", "url_checks.tsv"))
 
    # It should be a data.frame
    testthat::expect_true(is.data.frame(results))

@@ -39,7 +39,7 @@ test_that("Make a quiz report", {
 
 
 test_that("Test real quiz in directory", {
-  testthat::skip_on_cran()
+
   rmd_dir <- setup_ottr_template(dir = ".", type = "rmd", render = FALSE)
 
   # it shouldn't have any errors with the template

@@ -128,11 +128,17 @@ website_to_embed_leanpub <- function(path = ".",
 
   md_output_files <- chapt_df %>%
     # Make the data.frame be in the same order
-    dplyr::select(dplyr::any_of("url"), dplyr::any_of("chapt_title"), dplyr::any_of("img_path")) %>%
+    dplyr::select(dplyr::any_of("url"),
+                  dplyr::any_of("chapt_title"),
+                  dplyr::any_of("img_path")) %>%
     # Run it make_embed_markdown on each row
     purrr::pmap(~ make_embed_markdown(
-      url = ..1, chapt_title = ..2, img_path = ..3, footer_text = footer_text,
-      output_dir = output_dir, path = root_dir
+      url = ..1,
+      chapt_title = ..2,
+      img_path = ..3,
+      footer_text = footer_text,
+      output_dir = output_dir,
+      path = root_dir,
     ))
 
   ####################### Book.txt creation ####################################
@@ -211,18 +217,24 @@ make_embed_markdown <- function(path = ".",
   # Find the OTTR course
   root_dir <- course_path(path = path)
 
+  output_dir <- file.path(root_dir, output_dir)
+
   chapt_file_name <- gsub(" ", "-", chapt_title)
 
   # Leanpub hates question marks and exclamation marks in titles
   chapt_file_name <- gsub("\\!|\\?", "", chapt_file_name)
 
   # Declare output file
-  output_file <- file.path(root_dir, output_dir, paste0(chapt_file_name, ".md"))
+  output_file <- file.path(output_dir, paste0(chapt_file_name, ".md"))
 
-  if (!dir.exists(output_dir)) {
-    dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+  if (!dir.exists(file.path(output_dir))) {
+    dir.create(file.path(output_dir), recursive = TRUE, showWarnings = FALSE)
   }
 
+  # This is where it will be saved later
+  new_img_dir <- file.path(output_dir, "resources", "chapt_screen_images")
+
+  # Write the markdown for leanpub
   file_contents <- c(
     paste("#", chapt_title),
     " ",
@@ -230,7 +242,7 @@ make_embed_markdown <- function(path = ".",
       "{type: iframe, title:", chapt_title,
       ", width:", width_spec,
       ", height:", height_spec,
-      ", poster:", img_path, "}"
+      ", poster:", file.path(new_img_dir, basename(img_path)), "}"
     ),
     paste0("![](", url, ")"),
     " ",
@@ -240,13 +252,13 @@ make_embed_markdown <- function(path = ".",
 
   write(file_contents, file = output_file)
 
-  new_img_path <- file.path(root_dir, output_dir, dirname(img_path))
-
-  if (!dir.exists(new_img_path)) {
-    dir.create(new_img_path, recursive = TRUE, showWarnings = TRUE)
+  if (!dir.exists(new_img_dir)) {
+    dir.create(new_img_dir, recursive = TRUE, showWarnings = TRUE)
   }
 
-  file.copy(from = file.path(root_dir, img_path), to = file.path(root_dir, output_dir, img_path), overwrite = TRUE)
+  file.copy(from = file.path(root_dir, img_path),
+            to = file.path(new_img_dir, basename(img_path)),
+            overwrite = TRUE)
 
   if (verbose) {
     message(paste0("Output saved to: ", output_file))
@@ -270,6 +282,9 @@ make_embed_markdown <- function(path = ".",
 get_chapters <- function(path = ".",
                          html_page = file.path("docs", "index.html"),
                          base_url = ".") {
+
+  root_dir <- course_path(path = path)
+
   # Put this relative to project path
   html_page <- file.path(root_dir, html_page)
 

@@ -64,11 +64,12 @@ check_quiz_dir <- function(path = ".",
     verbose = TRUE)
 
   if (nrow(quiz_df) > 0) {
-    file.copy("question_error_report.tsv", file.path(root_dir, "check_reports"))
-    file.remove("question_error_report.tsv")
+    file.copy(from = file.path(root_dir, quiz_dir, "question_error_report.tsv"),
+              to = output_file)
+    file.remove(file.path(root_dir, quiz_dir, "question_error_report.tsv"))
 
     # Print out how many quiz check errors
-    write(nrow(quiz_errors), stdout())
+    write(nrow(quiz_df), stdout())
 
     message(paste0("Errors listed and saved to: ", output_file))
 
