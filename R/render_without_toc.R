@@ -53,7 +53,7 @@ render_without_toc <- function(path = ".",
   }
   output_yaml_file <- file.path(root_dir, output_yaml)
 
-  output_yaml_file$in_header <- c(output_yaml_file$`bookdown::gitbook`$includes$in_header, file.path(root_dir, "assets", "links.html"))
+  output_yaml_file$bookdown::gitbook`$includesin_header <- c(output_yaml_file$`bookdown::gitbook`$includes$in_header, file.path(root_dir, "assets", "links.html"))
 
   # Make sure we have that file
   if (!file.exists(toc_close_css)) {
