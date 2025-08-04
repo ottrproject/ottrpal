@@ -131,7 +131,8 @@ render_without_toc <- function(path = ".",
 
   # Update yaml file before doing the rendering
   output_yaml_lines$`bookdown::gitbook`$includes$in_header <- c(output_yaml_lines$`bookdown::gitbook`$includes$in_header, file.path(root_dir, "assets", "links.html"))
-  yaml::write_yaml(output_yaml_lines, output_yaml_file)
+  new_output_yaml <- file.path(root_dir, paste0("_updated", output_yaml))
+  yaml::write_yaml(output_yaml_lines, new_output_yaml)
 
   ###### Now do the rendering! ######
   message("Render bookdown without TOC")
@@ -139,7 +140,7 @@ render_without_toc <- function(path = ".",
   # Do the render
   bookdown::render_book(
     input = "index.Rmd",
-    output_yaml = output_yaml_file,
+    output_yaml = new_output_yaml,
     output_dir = output_dir
   )
 
