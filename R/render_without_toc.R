@@ -29,6 +29,9 @@ render_without_toc <- function(path = ".",
   # Find root directory by finding `.git` folder
   root_dir <- course_path()
 
+  # Add a file that specifies how links should be opened (prob should just add this file to the template instead of creating it here)
+  writeLines('<base target="_blank">', file.path(root_dir, "assets", "links.html"))
+
   # Output files:
   output_dir <- file.path(root_dir, output_dir)
 
@@ -49,6 +52,8 @@ render_without_toc <- function(path = ".",
     )
   }
   output_yaml_file <- file.path(root_dir, output_yaml)
+
+  output_yaml_file$in_header <- c(output_yaml_file$`bookdown::gitbook`$includes$in_header, file.path(root_dir, "assets", "links.html"))
 
   # Make sure we have that file
   if (!file.exists(toc_close_css)) {
