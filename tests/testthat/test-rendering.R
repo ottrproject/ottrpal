@@ -24,6 +24,20 @@ test_that("Rmd Website Rendering", {
 })
 
 
+test_that("Rmd Website Tocless Rendering", {
+  testthat::skip_on_cran()
+  rmd_dir <- setup_ottr_template(dir = ".", type = "rmd")
+  
+  render_without_toc(path = rmd_dir)
+  
+  testthat::expect_true(dir.exists(rmd_dir))
+  
+  clean_up()
+  
+  testthat::expect_true(!dir.exists(rmd_dir))
+})
+
+
 test_that("Quarto Rendering", {
   testthat::skip_on_cran()
   quarto_dir <- setup_ottr_template(dir = ".", type = "quarto")

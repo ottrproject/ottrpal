@@ -27,8 +27,8 @@ render_without_toc <- function(path = ".",
                                output_quiz_dir = "coursera_quizzes",
                                verbose = TRUE) {
   # Find root directory by finding `.git` folder
-  root_dir <- course_path()
-
+  root_dir <- course_path(path = path)
+  
   # Output files:
   output_dir <- file.path(root_dir, output_dir)
 
@@ -44,7 +44,7 @@ render_without_toc <- function(path = ".",
   toc_close_css <- file.path(root_dir, "assets", "toc_close.css")
 
   if (!file.exists(toc_close_css)) {
-    download.file("https://raw.githubusercontent.com/ottrproject/ottrpal/master/inst/extdata/toc_close.css",
+    download.file("https://raw.githubusercontent.com/ottrproject/ottrpal/main/inst/extdata/toc_close.css",
       destfile = toc_close_css
     )
   }
@@ -69,29 +69,25 @@ render_without_toc <- function(path = ".",
   # Copy these directories over if they don't exist in the output folder
   needed_directories <- c("assets", "resources")
 
-  if (verbose) {
-    message(paste0(c("Needed directories being copied:"), collapse = "\n"))
-  }
-
   # Do the copying
   lapply(needed_directories, function(needed_dir) {
     if (verbose) {
       message(needed_dir)
     }
-    if (!dir.exists(needed_dir)) {
+    if (!dir.exists(file.path(root_dir, needed_dir))) {
       stop(paste0("Needed directory:", needed_dir, "does not exist in the current path."))
     }
     if (!dir.exists(file.path(output_dir, needed_dir))) {
       dir.create(file.path(output_dir, needed_dir), showWarnings = FALSE)
-      file.copy(needed_dir, file.path(output_dir, needed_dir), recursive=TRUE)
+      file.copy(file.path(root_dir, needed_dir), file.path(output_dir, needed_dir), recursive=TRUE)
     }
   })
 
   # Slightly different path for the libs folder
-  libs_path <- file.path("docs", "libs")
+  libs_path <- file.path(root_dir, "docs", "libs")
   if (!dir.exists(file.path(output_dir, "libs"))) {
     if (verbose) {
-      message(file.path("docs", "libs"))
+      message(file.path(root_dir, "docs", "libs"))
     }
     dir.create(file.path(output_dir, "libs"), showWarnings = FALSE)
     file.copy(libs_path, file.path(output_dir, "libs"), recursive=TRUE)
@@ -107,7 +103,7 @@ render_without_toc <- function(path = ".",
   # Check if there are multiple .css
   if (length(org_css_file) > 1) {
     # Read all .css
-    css_files_read <- sapply(org_css_file, readLines)
+    css_files_read <- sapply(file.path(root_dir, org_css_file), readLines)
 
     # Make a "mega .css" and write
     if (verbose) {
@@ -120,17 +116,18 @@ render_without_toc <- function(path = ".",
     css_file <- file.path(output_dir, org_css_file)
 
     # Write it as "style.css"
-    file.copy(org_css_file,
+    file.copy(file.path(root_dir, org_css_file),
       css_file,
       overwrite = TRUE
     )
   }
 
   # Add a file that specifies how links should be opened (prob should just add this file to the template instead of creating it here)
-  writeLines('<base target="_blank">', file.path(root_dir, "assets", "links.html"))
+  writeLines('<base target="_blank">', file.path(output_dir, "assets", "links.html"))
 
   # Update yaml file before doing the rendering
-  output_yaml_lines$`bookdown::gitbook`$includes$in_header <- c(output_yaml_lines$`bookdown::gitbook`$includes$in_header, file.path(root_dir, "assets", "links.html"))
+  output_yaml_lines$`bookdown::gitbook`$includes$in_header <- c(output_yaml_lines$`bookdown::gitbook`$includes$in_header, 
+                                                                file.path(output_dir, "assets", "links.html"))
   new_output_yaml <- file.path(root_dir, paste0("_updated", output_yaml))
   yaml::write_yaml(output_yaml_lines, new_output_yaml)
 
@@ -139,7 +136,7 @@ render_without_toc <- function(path = ".",
 
   # Do the render
   bookdown::render_book(
-    input = "index.Rmd",
+    input = root_dir,
     output_yaml = new_output_yaml,
     output_dir = output_dir
   )
