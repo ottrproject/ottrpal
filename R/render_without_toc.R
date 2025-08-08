@@ -128,7 +128,7 @@ render_without_toc <- function(path = ".",
   # Update yaml file before doing the rendering
   output_yaml_lines$`bookdown::gitbook`$includes$in_header <- c(output_yaml_lines$`bookdown::gitbook`$includes$in_header, 
                                                                 file.path(output_dir, "assets", "links.html"))
-  new_output_yaml <- file.path(root_dir, paste0("_updated", output_yaml))
+  new_output_yaml <- file.path(output_dir, paste0("_updated", output_yaml))
   yaml::write_yaml(output_yaml_lines, new_output_yaml)
 
   ###### Now do the rendering! ######
