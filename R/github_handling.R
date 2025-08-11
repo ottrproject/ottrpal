@@ -231,7 +231,7 @@ check_git_repo <- function(repo_name,
   }
 
   # Run git ls-remote
-  if (!grepl("Error", token[1])) {
+  if (isTRUE(!grepl("Error", token[1]))) {
     # If token is supplied, use it
     test_repo <- report(
       try(system(paste0("git ls-remote https://", token, "@github.com/", repo_name),
