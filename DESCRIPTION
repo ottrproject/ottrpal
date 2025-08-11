@@ -23,6 +23,7 @@ Imports:
   stringr,
   tidyr,
   gitcreds,
+  gh,
   knitr,
   purrr,
   rmarkdown,
@@ -32,7 +33,7 @@ Imports:
   spelling,
   xml2,
   R.utils,
-  googledrive, 
+  googledrive,
   jsonlite,
   yaml
 Suggests:
