@@ -53,14 +53,14 @@ check_urls <- function(path = ".",
 
   # Read in ignore urls file if it exists
   if (file.exists(ignore_urls_file)) {
-    ignore_urls <- readLines(ignore_urls_file)
+    ignore_urls <- trimws(readLines(ignore_urls_file))
   } else {
     ignore_urls <- ""
   }
 
-  # Read in ignore urls file if it exists
+  # Read in exclude file if it exists
   if (file.exists(exclude_file)) {
-    exclude_file <- readLines(exclude_file)
+    exclude_file <- trimws(readLines(exclude_file))
   } else {
     exclude_file <- ""
   }
