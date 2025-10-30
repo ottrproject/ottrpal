@@ -47,7 +47,7 @@
 #' # For a file in another repository:
 #' # ```{r, echo=FALSE, results='asis'}
 #' borrow_chapter(
-#'   doc_path = "docs/02-chapter_of_course.md",
+#'   doc_path = "02-chapter_of_course.Rmd",
 #'   repo_name = "ottrproject/OTTR_Template"
 #' )
 #' # ```
