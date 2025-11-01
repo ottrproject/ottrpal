@@ -198,6 +198,8 @@ get_repo_info <- function(repo_name,
 #' @return A TRUE/FALSE whether or not the repository exists. Optionally the
 #' output from git ls-remote if return_repo = TRUE.
 #'
+#' @import gh
+#'
 #' @export
 #'
 #' @examples \dontrun{
@@ -216,14 +218,20 @@ check_git_repo <- function(repo_name,
   # If silent = TRUE don't print out the warning message from the 'try'
   report <- ifelse(silent, suppressWarnings, message)
 
+  repo_info <- try(gh::gh(paste0("/repos/", repo_name)), silent=TRUE)
+  if (length(repo_info) == 1){
+    if (class(repo_info) == "try-error"){
+      stop("Can't validate if the repo is private or not")
+  }}
+
   # Try to get credentials other way
-  if (is.null(token)) {
+  if (is.null(token) & repo_info$private) {
     # Get auth token
     token <- get_token(app_name = "github")
   }
 
   # Run git ls-remote
-  if (!grepl("Error", token[1])) {
+  if (isTRUE(!grepl("Error", token[1]))) {
     # If token is supplied, use it
     test_repo <- report(
       try(system(paste0("git ls-remote https://", token, "@github.com/", repo_name),

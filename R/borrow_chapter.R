@@ -4,7 +4,7 @@
 #' you may want to share written material between the two.
 #' But, if you copy and paste to share material this would create a maintenance
 #' problem because if you update one you will need to remember to copy over the
-#' other! 
+#' other!
 #' To borrow a chapter from another course, create an .Rmd as you normally would,
 #'  with an [`H1` title](https://www.markdownguide.org/basic-syntax/) if you wish.
 #' Then in a code chunk, use cow::borrow_chapter() to have the content from an
@@ -113,6 +113,8 @@ borrow_chapter <- function(doc_path,
       }
     }
 
+    message("Got to here")
+
     # Piece together URL
     full_url <- file.path(base_url, repo_name, branch, doc_path)
 
@@ -156,8 +158,13 @@ borrow_chapter <- function(doc_path,
       )
     }
   }
+
+  message("Also got to here")
+
   writeLines(file_contents, dest_file)
 
+  message("and wrote lines")
+  
   # Get parent directory
   parent_dir <- knitr::opts_knit$get("output.dir")
 
