@@ -87,7 +87,7 @@ get_pages_url <- function(repo_name,
       # Github api get
       response <- httr::GET(
         url,
-        httr::add_headers(Authorization = paste0("token ", token)),
+        httr::add_headers(Authorization = paste0("Bearer ", token)),
         httr::accept_json()
       )
 
@@ -165,7 +165,7 @@ get_repo_info <- function(repo_name,
       # Github api get
       response <- httr::GET(
         url,
-        httr::add_headers(Authorization = paste0("token ", token)),
+        httr::add_headers(Authorization = paste0("Bearer ", token)),
         httr::accept_json()
       )
     }
