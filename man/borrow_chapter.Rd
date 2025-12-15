@@ -10,7 +10,6 @@ borrow_chapter(
   remove_h1 = FALSE,
   tag_replacement = NULL,
   branch = "main",
-  token = NULL,
   base_url = "https://raw.githubusercontent.com",
   dest_dir = file.path("resources", "other_chapters")
 )
@@ -33,9 +32,6 @@ the child document upon bringing it into the render.}
 
 \item{branch}{Default is to pull from main branch, but need to declare if
 other branch is needed.}
-
-\item{token}{A personal access token from GitHub. Only necessary if the
-repository being checked is a private repository.}
 
 \item{base_url}{it's assumed this is coming from github so it is by default
 'https://raw.githubusercontent.com/'}
@@ -65,7 +61,7 @@ Rmd from another repository knitted into the Rmd.
 # For a file in another repository:
 # ```{r, echo=FALSE, results='asis'}
 borrow_chapter(
-  doc_path = "docs/02-chapter_of_course.md",
+  doc_path = "02-chapter_of_course.Rmd",
   repo_name = "ottrproject/OTTR_Template"
 )
 # ```
