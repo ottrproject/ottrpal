@@ -216,7 +216,10 @@ check_git_repo <- function(repo_name,
   # Try to get credentials other way
   if (is.null(token)) {
     # Get auth token
-    token <- tryCatch(get_token(app_name = "github"), error = function(msg) NULL)
+    token <- tryCatch(
+              suppressWarnings(get_token(app_name = "github")),
+              error = function(msg) NULL
+            )
   }
 
   url <- paste0("https://api.github.com/repos/", repo_name)
