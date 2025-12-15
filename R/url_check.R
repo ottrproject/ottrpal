@@ -71,7 +71,7 @@ check_urls <- function(path = ".",
   if (exclude_file[1] != "") files <- grep(paste0(exclude_file, collapse = "|"), files, invert = TRUE, value = TRUE)
 
   # Run this for all Rmds
-  all_urls <- lapply(files, get_urls)
+  all_urls <- lapply(files, get_urls, ignore_urls = ignore_urls)
 
   # Write the file
   all_urls_df <- dplyr::bind_rows(all_urls)
@@ -248,9 +248,6 @@ get_urls <- function(file, ignore_urls = "") {
 
   # Remove trailing characters
   urls <- gsub("\\'\\:$|\\'|\\:$|\\.$|\\)$|\\,$", "", urls)
-
-  # Remove URLs that are in the ignore
-  if (ignore_urls[1] != "") urls <- grep(paste0(ignore_urls, collapse = "|"), urls, invert = TRUE, value = TRUE)
 
   if (length(urls) > 0) {
     # Remove trailing characters
