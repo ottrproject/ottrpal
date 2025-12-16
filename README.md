@@ -19,7 +19,7 @@ Go to [ottrproject.org](https://www.ottrproject.org/) to get started! :tada:
 
 ## Installing ottrpal:
 
-You can install `ottrpal` from GitHub with:
+You can install `ottrpal` from Cran with:
 ```
 install.packages("ottrpal")
 ```
