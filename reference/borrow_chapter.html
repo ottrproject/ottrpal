@@ -85,7 +85,6 @@ Rmd from another repository knitted into the Rmd.</p>
 <span>  remove_h1 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  tag_replacement <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  branch <span class="op">=</span> <span class="st">"main"</span>,</span>
-<span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  base_url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com"</span>,</span>
 <span>  dest_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"resources"</span>, <span class="st">"other_chapters"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -123,11 +122,6 @@ the child document upon bringing it into the render.</p></dd>
 other branch is needed.</p></dd>
 
 
-<dt id="arg-token">token<a class="anchor" aria-label="anchor" href="#arg-token"></a></dt>
-<dd><p>A personal access token from GitHub. Only necessary if the
-repository being checked is a private repository.</p></dd>
-
-
 <dt id="arg-base-url">base_url<a class="anchor" aria-label="anchor" href="#arg-base-url"></a></dt>
 <dd><p>it's assumed this is coming from github so it is by default
 'https://raw.githubusercontent.com/'</p></dd>
@@ -152,7 +146,7 @@ the current repository.</p></dd>
 <span class="r-in"><span><span class="co"># For a file in another repository:</span></span></span>
 <span class="r-in"><span><span class="co"># ```{r, echo=FALSE, results='asis'}</span></span></span>
 <span class="r-in"><span><span class="fu">borrow_chapter</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  doc_path <span class="op">=</span> <span class="st">"docs/02-chapter_of_course.md"</span>,</span></span>
+<span class="r-in"><span>  doc_path <span class="op">=</span> <span class="st">"02-chapter_of_course.Rmd"</span>,</span></span>
 <span class="r-in"><span>  repo_name <span class="op">=</span> <span class="st">"ottrproject/OTTR_Template"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># ```</span></span></span>

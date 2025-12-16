@@ -63,13 +63,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">check_git_repo</span><span class="op">(</span></span>
-<span>  <span class="va">repo_name</span>,</span>
-<span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  return_repo <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">check_git_repo</span><span class="op">(</span><span class="va">repo_name</span>, token <span class="op">=</span> <span class="cn">NULL</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -88,11 +82,6 @@ repository being checked is a private repository.</p></dd>
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
 <dd><p>TRUE/FALSE of whether the warning from the git ls-remote
 command should be echoed back if it does fail.</p></dd>
-
-
-<dt id="arg-return-repo">return_repo<a class="anchor" aria-label="anchor" href="#arg-return-repo"></a></dt>
-<dd><p>TRUE/FALSE of whether or not the output from git ls-remote
-should be saved to a file (if the repo exists)</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
