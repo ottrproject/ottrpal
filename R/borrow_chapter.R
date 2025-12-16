@@ -127,7 +127,7 @@ borrow_chapter <- function(doc_path,
   }
 
   # Remove leanbuild::set_knitr_image_path() from downloaded file
-  file_contents <- readLines(doc_path)
+  file_contents <- readLines(dest_file)
   file_contents <- gsub("leanbuild::set_knitr_image_path\\(\\)", "", file_contents)
 
   # If remove_header = TRUE
