@@ -4,13 +4,7 @@
 \alias{check_git_repo}
 \title{Check if a repository exists on GitHub}
 \usage{
-check_git_repo(
-  repo_name,
-  token = NULL,
-  silent = TRUE,
-  return_repo = FALSE,
-  verbose = TRUE
-)
+check_git_repo(repo_name, token = NULL, silent = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{repo_name}{the name of the repository, e.g. ottrproject/OTTR_Template}
@@ -20,9 +14,6 @@ repository being checked is a private repository.}
 
 \item{silent}{TRUE/FALSE of whether the warning from the git ls-remote
 command should be echoed back if it does fail.}
-
-\item{return_repo}{TRUE/FALSE of whether or not the output from git ls-remote
-should be saved to a file (if the repo exists)}
 
 \item{verbose}{TRUE/FALSE do you want more progress messages?}
 }

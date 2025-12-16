@@ -23,8 +23,6 @@
 #' the child document upon bringing it into the render.
 #' @param branch Default is to pull from main branch, but need to declare if
 #' other branch is needed.
-#' @param token A personal access token from GitHub. Only necessary if the
-#' repository being checked is a private repository.
 #' @param base_url it's assumed this is coming from github so it is by default
 #' 'https://raw.githubusercontent.com/'
 #' @param dest_dir A file path where the file should be stored upon arrival to
@@ -77,7 +75,6 @@ borrow_chapter <- function(doc_path,
                            remove_h1 = FALSE,
                            tag_replacement = NULL,
                            branch = "main",
-                           token = NULL,
                            base_url = "https://raw.githubusercontent.com",
                            dest_dir = file.path("resources", "other_chapters")) {
   # Declare file names
@@ -104,12 +101,11 @@ borrow_chapter <- function(doc_path,
     if (!is_wiki) {
       exists <- check_git_repo(
         repo_name = repo_name,
-        token = token,
         verbose = FALSE,
         silent = TRUE
       )
       if (!exists) {
-        warning(paste(repo_name, "was not found in GitHub. If it is a private repository, make sure your credentials have been provided"))
+        warning(paste(repo_name, "was not found in GitHub. Borrow chapter does not work with private repositories. Please check that the repository exists and is public."))
       }
     }
 
@@ -131,7 +127,7 @@ borrow_chapter <- function(doc_path,
   }
 
   # Remove leanbuild::set_knitr_image_path() from downloaded file
-  file_contents <- readLines(doc_path)
+  file_contents <- readLines(dest_file)
   file_contents <- gsub("leanbuild::set_knitr_image_path\\(\\)", "", file_contents)
 
   # If remove_header = TRUE

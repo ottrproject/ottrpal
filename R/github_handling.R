@@ -87,7 +87,7 @@ get_pages_url <- function(repo_name,
       # Github api get
       response <- httr::GET(
         url,
-        httr::add_headers(Authorization = paste0("token ", token)),
+        httr::add_headers(Authorization = paste0("Bearer ", token)),
         httr::accept_json()
       )
 
@@ -165,7 +165,7 @@ get_repo_info <- function(repo_name,
       # Github api get
       response <- httr::GET(
         url,
-        httr::add_headers(Authorization = paste0("token ", token)),
+        httr::add_headers(Authorization = paste0("Bearer ", token)),
         httr::accept_json()
       )
     }
@@ -192,8 +192,6 @@ get_repo_info <- function(repo_name,
 #' @param silent TRUE/FALSE of whether the warning from the git ls-remote
 #' command should be echoed back if it does fail.
 #' @param verbose TRUE/FALSE do you want more progress messages?
-#' @param return_repo TRUE/FALSE of whether or not the output from git ls-remote
-#' should be saved to a file (if the repo exists)
 #'
 #' @return A TRUE/FALSE whether or not the repository exists. Optionally the
 #' output from git ls-remote if return_repo = TRUE.
@@ -208,7 +206,6 @@ get_repo_info <- function(repo_name,
 check_git_repo <- function(repo_name,
                            token = NULL,
                            silent = TRUE,
-                           return_repo = FALSE,
                            verbose = TRUE) {
   if (verbose) {
     message(paste("Checking for remote git repository:", repo_name))
@@ -219,39 +216,29 @@ check_git_repo <- function(repo_name,
   # Try to get credentials other way
   if (is.null(token)) {
     # Get auth token
-    token <- get_token(app_name = "github")
+    token <- tryCatch(
+              suppressWarnings(get_token(app_name = "github")),
+              error = function(msg) NULL
+            )
   }
 
-  # Run git ls-remote
-  if (!grepl("Error", token[1])) {
-    # If token is supplied, use it
-    test_repo <- report(
-      try(system(paste0("git ls-remote https://", token, "@github.com/", repo_name),
-        intern = TRUE, ignore.stderr = TRUE
-      ))
-    )
+  url <- paste0("https://api.github.com/repos/", repo_name)
+
+  # Github api HEAD
+  result <- if(is.null(token)) {
+    httr::HEAD(url)
   } else {
-    # Try to git ls-remote the repo_name given
-    test_repo <- report
-    try(system(paste0("git ls-remote https://github.com/", repo_name),
-      intern = TRUE, ignore.stderr = TRUE
-    ))
-  }
-  # If 128 is returned as a status attribute it means it failed
-  exists <- ifelse(is.null(attr(test_repo, "status")), TRUE, FALSE)
-
-  if (return_repo && exists) {
-    # Make file name
-    output_file <- paste0("git_ls_remote_", gsub("/", "_", repo_name))
-
-    # Tell the user the file was saved
-    message(paste("Saving output from git ls-remote to file:", output_file))
-
-    # Write to file
-    writeLines(exists, file.path(output_file))
+    httr::HEAD(
+      url,
+      httr::add_headers(Authorization = paste0("Bearer ", token)),
+    )
   }
 
-  return(exists)
+  if (httr::status_code(result) != 200) {
+    return(FALSE)
+  } else {
+    return(TRUE)
+  }
 }
 
 
