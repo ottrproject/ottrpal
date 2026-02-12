@@ -1,6 +1,9 @@
 # C. Savonen 2025
 
-utils::globalVariables(c("question", "original", "n", "metadata_check", "index", "ignore_coursera"))
+utils::globalVariables(c(
+  "question", "original", "n", "metadata_check", "index", "ignore_coursera",
+  "answer", "meta", "repeated", "number"
+))
 
 
 #' Check all quizzes' formatting for Leanpub
@@ -55,8 +58,6 @@ check_quiz_dir <- function(path = ".",
   }
 
   output_file <- file.path(output_dir, "question_error_report.tsv")
-  ignore_urls_file <- file.path(resources_dir, "ignore-urls.txt")
-  exclude_file <- file.path(resources_dir, "exclude_files.txt")
 
   quiz_df <- ottrpal::check_quizzes(
     quiz_dir = file.path(root_dir, quiz_dir),
@@ -339,7 +340,7 @@ parse_coursera_quiz <- function(quiz_lines) {
     answer_lines <- character()
     is_correct <- logical()
     j <- opts_start + 1
-    while (j <= length(block)) {
+    while (j <= length(block)) { # nolint: seq_linter. length(block) required for loop bound
       line <- block[j]
       if (grepl("^\\s{4}-\\s*answer:?", line)) {
         ans_text <- sub("^\\s{4}-\\s*answer:?\\s*", "", line)
@@ -496,7 +497,7 @@ parse_quiz_df <- function(quiz_lines, remove_tags = FALSE) {
   quiz_df <- data.frame(
     original = quiz_lines,
     trimmed = trimws(quiz_lines, which = "left"),
-    index = 1:length(quiz_lines)
+    index = seq_along(quiz_lines)
   ) %>%
     dplyr::mutate(
       type = dplyr::case_when(
@@ -671,7 +672,7 @@ parse_q_tag <- function(tag) {
 parse_quiz <- function(quiz_lines,
                        quiz_name = NULL,
                        verbose = FALSE) {
-  answer <- meta <- repeated <- question <- number <- NULL
+  answer <- meta <- repeated <- question <- number <- NULL # nolint: object_usage_linter.
   rm(list = c("number", "question", "repeated", "answer", "meta"))
 
   # Extract only the lines of the actual quiz
@@ -989,13 +990,13 @@ check_question <- function(question_df, quiz_name = NA, verbose = TRUE, ignore_c
     tot_ans_index <- question_start_index
   }
 
-  if (length(correct_answers) == 0 & length(fill_in) == 0) {
+  if (length(correct_answers) == 0 && length(fill_in) == 0) {
     cor_ans_msg <- paste0("No correct answers provided for ", quiz_identity)
     warning(cor_ans_msg)
     cor_ans_index <- question_start_index
   }
 
-  if (length(wrong_answers) == 0 & length(fill_in) == 0) {
+  if (length(wrong_answers) == 0 && length(fill_in) == 0) {
     inc_ans_msg <- paste0("No incorrect answer options provided for ", quiz_identity)
     warning(inc_ans_msg)
     inc_ans_index <- question_start_index
@@ -1010,7 +1011,7 @@ check_question <- function(question_df, quiz_name = NA, verbose = TRUE, ignore_c
     question_meta <- extract_meta(tags)
 
     # Check the attributes
-    attr_msg <- check_quiz_question_attributes(question_df,
+    check_quiz_question_attributes(question_df,
       quiz_name = quiz_name
     )
 
@@ -1022,16 +1023,12 @@ check_question <- function(question_df, quiz_name = NA, verbose = TRUE, ignore_c
           "choose-answers number is greater than the number of answers provided in: ",
           quiz_identity
         )
-        choos_ans_index <- question_start_index
         warning(choos_ans_msg)
       }
     } else {
       # If choose answers isn't used then put NA for this check
       choos_ans_msg <- NA
     }
-  } else {
-    # If attributes weren't declared then put NA for this check
-    attr_msg <- NA
   }
   #### Check answer formats:
   exclam_index <- question_df %>%
