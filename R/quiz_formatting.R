@@ -1,6 +1,9 @@
 # C. Savonen 2025
 
-utils::globalVariables(c("question", "original", "n", "metadata_check", "index", "ignore_coursera"))
+utils::globalVariables(c(
+  "question", "original", "n", "metadata_check", "index", "ignore_coursera",
+  "answer", "meta", "repeated", "number"
+))
 
 
 #' Check all quizzes' formatting for Leanpub
@@ -55,8 +58,6 @@ check_quiz_dir <- function(path = ".",
   }
 
   output_file <- file.path(output_dir, "question_error_report.tsv")
-  ignore_urls_file <- file.path(resources_dir, "ignore-urls.txt")
-  exclude_file <- file.path(resources_dir, "exclude_files.txt")
 
   quiz_df <- ottrpal::check_quizzes(
     quiz_dir = file.path(root_dir, quiz_dir),
@@ -88,29 +89,19 @@ check_quiz_dir <- function(path = ".",
 
 
 find_end_of_prompt <- function(start_prompt_index, type_vector) {
-  # We want to see if the next line is where the answers start
-  end_prompt_index <- start_prompt_index + 1
+  # Look only at lines occurring after the start of the prompt
+  search_range <- (start_prompt_index + 1):length(type_vector)
 
-  # See if the end of the prompt is in the same line
-  end_prompt <- grepl("answer", type_vector[end_prompt_index])
+  # Find the first index within that range where "answer" appears
+  match_idx <- which(grepl("answer", type_vector[search_range]))[1]
 
-  # Keep looking in each next line until we find it.
-  if (end_prompt == FALSE) {
-    while (end_prompt == FALSE) {
-      # Add one
-      end_prompt_index <- end_prompt_index + 1
-
-      # Look in next line
-      end_prompt <- grepl("answer", type_vector[end_prompt_index])
-
-      if (end_prompt_index == length(type_vector) && end_prompt == FALSE) {
-        stop(paste("Searched end of file and could not find end of prompt that starts at line:", start_prompt_index))
-      }
-    }
-  } else {
-    end_prompt_index <- start_prompt_index
+  if (is.na(match_idx)) {
+    stop(paste("Searched end of file and could not find end of prompt starting at line:", start_prompt_index))
   }
-  return(end_prompt_index)
+
+  # Last prompt line is the line before the first answer (or the prompt line itself if answer starts immediately)
+  last_prompt_line <- start_prompt_index + match_idx - 1
+  return(max(start_prompt_index, last_prompt_line))
 }
 
 #' Convert Leanpub md quiz to Coursera yaml quiz
@@ -169,54 +160,61 @@ convert_quiz <- function(quiz_path,
   quiz_lines_df <- quiz_lines_df %>%
     dplyr::filter(!(index %in% remove_answers))
 
-  # Turn updated lines into a named vector
+  # Named vector of lines (names = type) so we can insert Coursera scaffolding by position
   updated_quiz_lines <- quiz_lines_df$updated_line
   names(updated_quiz_lines) <- quiz_lines_df$type
 
-  ### Add specs for coursera
+  prompt_ats <- which(names(updated_quiz_lines) %in% c("prompt", "single_line_prompt"))
+  if (length(prompt_ats) == 0) {
+    stop("No question prompts found in the quiz file. Ensure each question starts with '? '.")
+  }
+
+  ### Insert Coursera YAML scaffolding; after each insert, set names for new elements
+  ### so subsequent which() lookups still target the right line types
   # Add typeName before prompt starts:
   updated_quiz_lines <- R.utils::insert(updated_quiz_lines,
-    ats = which(names(updated_quiz_lines) %in% c("prompt", "single_line_prompt")),
+    ats = prompt_ats,
     values = "- typeName: multipleChoice"
   )
+  names(updated_quiz_lines)[prompt_ats] <- "_typeName_"
 
-  ### Add "  options:" before beginning of answer options
-  updated_quiz_lines <- R.utils::insert(updated_quiz_lines,
-    ats = which(names(updated_quiz_lines) %in% c("end_prompt", "single_line_prompt")) + 1,
-    values = "  options:"
-  )
+  options_ats <- which(names(updated_quiz_lines) %in% c("end_prompt", "single_line_prompt")) + 1
+  if (length(options_ats) > 0) {
+    updated_quiz_lines <- R.utils::insert(updated_quiz_lines, ats = options_ats, values = "  options:")
+    names(updated_quiz_lines)[options_ats] <- "_options_header_"
+  }
 
-  # Add shuffleoptions: true after prompt ends
-  updated_quiz_lines <- R.utils::insert(updated_quiz_lines,
-    ats = which(names(updated_quiz_lines) %in% c("end_prompt", "single_line_prompt")) + 1,
-    values = "  shuffleOptions: true"
-  )
+  shuffle_ats <- which(names(updated_quiz_lines) %in% c("end_prompt", "single_line_prompt")) + 1
+  if (length(shuffle_ats) > 0) {
+    updated_quiz_lines <- R.utils::insert(updated_quiz_lines, ats = shuffle_ats, values = "  shuffleOptions: true")
+    names(updated_quiz_lines)[shuffle_ats] <- "_shuffle_"
+  }
 
-  # Need to add "isCorrect: true" one line below correct value lines
-  updated_quiz_lines <- R.utils::insert(updated_quiz_lines,
-    ats = which(names(updated_quiz_lines) == "correct_answer") + 1,
-    values = "      isCorrect: true"
-  )
+  correct_ats <- which(names(updated_quiz_lines) == "correct_answer") + 1
+  if (length(correct_ats) > 0) {
+    updated_quiz_lines <- R.utils::insert(updated_quiz_lines, ats = correct_ats, values = "      isCorrect: true")
+    names(updated_quiz_lines)[correct_ats] <- "_is_correct_"
+  }
 
-  # Need to add "isCorrect: false" one line below incorrect value lines
-  updated_quiz_lines <- R.utils::insert(updated_quiz_lines,
-    ats = which(names(updated_quiz_lines) == "wrong_answer") + 1,
-    values = "      isCorrect: false"
-  )
+  wrong_ats <- which(names(updated_quiz_lines) == "wrong_answer") + 1
+  if (length(wrong_ats) > 0) {
+    updated_quiz_lines <- R.utils::insert(updated_quiz_lines, ats = wrong_ats, values = "      isCorrect: false")
+    names(updated_quiz_lines)[wrong_ats] <- "_is_wrong_"
+  }
 
   # Remove other lines
-  updated_quiz_lines <- updated_quiz_lines[-grep("other", names(updated_quiz_lines))]
+  other_idx <- grep("other", names(updated_quiz_lines))
+  if (length(other_idx) > 0) {
+    updated_quiz_lines <- updated_quiz_lines[-other_idx]
+  }
 
-  # Add extra line in between each question
-  updated_quiz_lines <- R.utils::insert(updated_quiz_lines,
-    ats = grep("typeName:", updated_quiz_lines),
-    values = ""
-  )
+  # Blank line before each question block
+  typeName_ats <- grep("typeName:", updated_quiz_lines)
+  if (length(typeName_ats) > 0) {
+    updated_quiz_lines <- R.utils::insert(updated_quiz_lines, ats = typeName_ats, values = "")
+  }
 
-  # Trim trailing space
   updated_quiz_lines <- trimws(updated_quiz_lines, which = "right")
-
-  # Add extra line in between each question
   updated_quiz_lines <- stringr::str_remove(updated_quiz_lines, ":$")
 
   # Return the options : though
@@ -270,7 +268,7 @@ convert_coursera_quizzes <- function(input_quiz_dir = "quizzes",
   )
 
   if (length(leanpub_quizzes) < 1) {
-    stop(paste0("No quiz .md files found in your specified path dir of: ", quiz_path))
+    stop(paste0("No quiz .md files found in your specified path dir of: ", input_quiz_dir))
   }
 
   # Run the thing!
@@ -279,6 +277,193 @@ convert_coursera_quizzes <- function(input_quiz_dir = "quizzes",
     verbose = verbose,
     output_quiz_dir = output_quiz_dir
   )
+}
+
+#' Parse Coursera YAML quiz into a structured list
+#'
+#' Parses the YAML structure produced by [convert_quiz] (Coursera multipleChoice
+#' format). Uses line-by-line parsing because the writer removes some trailing
+#' colons. Each question becomes a list with \code{prompt} (character) and
+#' \code{options} (data frame with columns \code{answer}, \code{is_correct}).
+#'
+#' @param quiz_lines Character vector of file contents (e.g. from \code{readLines()}).
+#' @return A list of lists, one per question, each with \code{prompt} and \code{options}.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' yml_path <- system.file("extdata", "quizzes", "quiz_coursera_sample.yml", package = "ottrpal")
+#' if (nzchar(yml_path)) {
+#'   parsed <- parse_coursera_quiz(readLines(yml_path))
+#' }
+#' }
+parse_coursera_quiz <- function(quiz_lines) {
+  lines <- trimws(quiz_lines, which = "right")
+  # Find question block starts: "- typeName: multipleChoice"
+  block_starts <- grep("^-\\s*typeName:\\s*multipleChoice", lines)
+  if (length(block_starts) == 0) {
+    return(list())
+  }
+  questions <- list()
+  for (question_idx in seq_along(block_starts)) {
+    start <- block_starts[question_idx]
+    end <- if (question_idx < length(block_starts)) block_starts[question_idx + 1] - 1 else length(lines)
+    block <- lines[start:end]
+    # Prompt: line "  prompt" or "  prompt:" (rest of line is prompt text)
+    prompt_line_idx <- grep("^\\s{2}prompt:?", block)[1]
+    if (is.na(prompt_line_idx)) next
+    first_prompt_line <- block[prompt_line_idx]
+    prompt_text <- sub("^\\s{2}prompt:?\\s*", "", first_prompt_line)
+    # Continuation lines: start with 4 spaces, before "  options:"
+    options_idx <- grep("^\\s{2}options:?", block)[1]
+    if (!is.na(options_idx) && options_idx > prompt_line_idx + 1) {
+      for (continuation_line_idx in (prompt_line_idx + 1):(options_idx - 1)) {
+        continuation_line <- block[continuation_line_idx]
+        if (grepl("^\\s{4}", continuation_line) && nchar(trimws(continuation_line)) > 0) {
+          prompt_text <- paste(prompt_text, sub("^\\s{4}", "", continuation_line), sep = "\n")
+        }
+      }
+    }
+    # Parse options: each "    - answer: ..." is followed by "      isCorrect: true" or "false"
+    opts_start <- if (is.na(options_idx)) length(block) + 1 else options_idx
+    answer_lines <- character()
+    is_correct <- logical()
+    block_line_idx <- opts_start + 1
+    while (block_line_idx <= length(block)) { # nolint: seq_linter. length(block) required for loop bound
+      line <- block[block_line_idx]
+      is_answer_line <- grepl("^\\s{4}-\\s*answer:?", line)
+      if (is_answer_line) {
+        ans_text <- sub("^\\s{4}-\\s*answer:?\\s*", "", line)
+        next_line <- if (block_line_idx + 1 <= length(block)) block[block_line_idx + 1] else ""
+        correct <- grepl("isCorrect:\\s*true", next_line, ignore.case = TRUE)
+        answer_lines <- c(answer_lines, ans_text)
+        is_correct <- c(is_correct, correct)
+        block_line_idx <- block_line_idx + 2
+      } else {
+        # Skip options header, shuffleOptions, or blank lines
+        block_line_idx <- block_line_idx + 1
+      }
+    }
+    options_df <- data.frame(
+      answer = answer_lines,
+      is_correct = is_correct,
+      stringsAsFactors = FALSE
+    )
+    questions[[question_idx]] <- list(prompt = prompt_text, options = options_df)
+  }
+  questions
+}
+
+#' Convert Coursera yaml quiz to Leanpub md quiz
+#'
+#' Convert a Coursera-formatted yaml quiz file (as produced by [convert_quiz])
+#' to a Leanpub-formatted md quiz file.
+#'
+#' @param quiz_path Path to a Coursera .yml or .yaml quiz file.
+#' @param output_quiz_dir Directory where the Leanpub .md file will be saved.
+#'   Default is the directory of \code{quiz_path}.
+#' @param verbose Whether to print progress messages.
+#' @return Path to the written Leanpub quiz file (invisibly).
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Convert a Coursera quiz to Leanpub
+#' yml_path <- system.file("extdata", "quizzes", "quiz_coursera_sample.yml", package = "ottrpal")
+#' if (nzchar(yml_path)) convert_quiz_to_leanpub(yml_path)
+#' }
+convert_quiz_to_leanpub <- function(quiz_path,
+                                    output_quiz_dir = dirname(quiz_path),
+                                    verbose = TRUE) {
+  if (verbose) {
+    message(paste("Converting quiz to Leanpub:", quiz_path))
+  }
+  lines <- readLines(quiz_path)
+  questions <- parse_coursera_quiz(lines)
+  if (length(questions) == 0) {
+    stop("No multipleChoice questions found in the Coursera quiz file.")
+  }
+  # Derive quiz id from filename (strip .yml/.yaml then .md if present)
+  base <- basename(quiz_path)
+  base <- sub("\\.(yml|yaml)$", "", base, ignore.case = TRUE)
+  quiz_id <- sub("\\.md$", "", base, ignore.case = TRUE)
+
+  out_lines <- c(
+    "",
+    paste0("{quiz, id: ", quiz_id, "}"),
+    ""
+  )
+  for (question in questions) {
+    prompt <- question$prompt
+    opts <- question$options
+    if (nrow(opts) == 0) next
+    out_lines <- c(out_lines, paste0("? ", prompt))
+    wrong_idx <- which(!opts$is_correct)
+    wrong_letters <- letters[seq_along(wrong_idx)]
+    for (option_idx in seq_len(nrow(opts))) {
+      if (opts$is_correct[option_idx]) {
+        out_lines <- c(out_lines, paste0("C) ", opts$answer[option_idx]))
+      } else {
+        letter <- wrong_letters[match(option_idx, wrong_idx)]
+        out_lines <- c(out_lines, paste0(letter, ") ", opts$answer[option_idx]))
+      }
+    }
+    out_lines <- c(out_lines, "")
+  }
+  out_lines <- c(out_lines, "{/quiz}")
+  output_filename <- file.path(output_quiz_dir, paste0(quiz_id, ".md"))
+  if (!dir.exists(output_quiz_dir)) {
+    dir.create(output_quiz_dir, recursive = TRUE, showWarnings = FALSE)
+  }
+  writeLines(out_lines, con = output_filename)
+  if (verbose) {
+    message(paste("Converted quiz saved to:", output_filename))
+  }
+  invisible(output_filename)
+}
+
+#' Convert directory of Coursera yaml quizzes to Leanpub md quizzes
+#'
+#' Converts all .yml/.yaml quiz files in a directory to Leanpub .md format using
+#' [convert_quiz_to_leanpub].
+#'
+#' @param input_quiz_dir Directory containing Coursera .yml/.yaml quiz files.
+#'   Default is \code{"coursera_quizzes"}.
+#' @param output_quiz_dir Directory where Leanpub .md files will be saved.
+#'   Created if it does not exist. Default is \code{"quizzes"}.
+#' @param verbose Whether to print progress messages.
+#' @return Invisibly, the vector of output file paths.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' tdir <- tempfile()
+#' dir.create(tdir, showWarnings = FALSE, recursive = TRUE)
+#' convert_quiz(good_quiz_path(), tdir)
+#' convert_leanpub_quizzes(input_quiz_dir = tdir, output_quiz_dir = "quizzes")
+#' }
+convert_leanpub_quizzes <- function(input_quiz_dir = "coursera_quizzes",
+                                   output_quiz_dir = "quizzes",
+                                   verbose = TRUE) {
+  if (!dir.exists(input_quiz_dir)) {
+    stop(paste0("Input directory not found: ", input_quiz_dir))
+  }
+  if (!dir.exists(output_quiz_dir)) {
+    dir.create(output_quiz_dir, recursive = TRUE, showWarnings = FALSE)
+  }
+  coursera_files <- list.files(
+    pattern = "\\.(yml|yaml)$",
+    ignore.case = TRUE,
+    path = input_quiz_dir,
+    full.names = TRUE
+  )
+  if (length(coursera_files) < 1) {
+    stop(paste0("No .yml or .yaml quiz files found in: ", input_quiz_dir))
+  }
+  out_paths <- vapply(coursera_files, function(f) {
+    convert_quiz_to_leanpub(f, output_quiz_dir = output_quiz_dir, verbose = verbose)
+  }, character(1))
+  invisible(out_paths)
 }
 
 #' Parse quiz into a data.frame
@@ -303,7 +488,7 @@ parse_quiz_df <- function(quiz_lines, remove_tags = FALSE) {
   quiz_df <- data.frame(
     original = quiz_lines,
     trimmed = trimws(quiz_lines, which = "left"),
-    index = 1:length(quiz_lines)
+    index = seq_along(quiz_lines)
   ) %>%
     dplyr::mutate(
       type = dplyr::case_when(
@@ -338,16 +523,17 @@ parse_quiz_df <- function(quiz_lines, remove_tags = FALSE) {
     type_vector = quiz_df$type
   )
 
-  # Rename "other" as also part of prompts
-  for (index in 1:length(start_prompt_indices)) {
-    if (start_prompt_indices[index] != end_prompt_indices[index]) {
-      # Mark things as a part of prompts
-      quiz_df$type[(start_prompt_indices[index] + 1):(end_prompt_indices[index] - 1)] <- "extended_prompt"
-
-      # Mark the end of prompts
-      quiz_df$type[end_prompt_indices[index] - 1] <- "end_prompt"
+  # end_prompt_indices are "last prompt line" (line before first answer, or prompt line if single-line)
+  for (index in seq_along(start_prompt_indices)) {
+    start_idx <- start_prompt_indices[index]
+    end_idx <- end_prompt_indices[index]
+    if (start_idx != end_idx) {
+      # Multiple lines of prompt: mark continuation as extended_prompt, last as end_prompt
+      quiz_df$type[(start_idx + 1):end_idx] <- "extended_prompt"
+      quiz_df$type[end_idx] <- "end_prompt"
     } else {
-      quiz_df$type[start_prompt_indices[index]] <- "single_line_prompt"
+      # Single-line prompt
+      quiz_df$type[start_idx] <- "single_line_prompt"
     }
   }
 
@@ -477,11 +663,11 @@ parse_q_tag <- function(tag) {
 parse_quiz <- function(quiz_lines,
                        quiz_name = NULL,
                        verbose = FALSE) {
-  answer <- meta <- repeated <- question <- number <- NULL
-  rm(list = c("number", "question", "repeated", "answer", "meta"))
-
   # Extract only the lines of the actual quiz
   extracted_quiz <- extract_quiz(quiz_lines)
+  if (is.null(extracted_quiz)) {
+    stop("Could not extract quiz content; missing {quiz} or {/quiz} tags.")
+  }
 
   # Quiz should have at least two lines
   if (length(extracted_quiz$quiz_lines) < 2) {
@@ -524,21 +710,23 @@ extract_quiz <- function(quiz_lines) {
   end <- grep("^\\s*\\{\\s*/\\s*quiz", quiz_lines)
 
   if (length(start) == 0) {
-    warning("Quiz should start with a { } tag and end with {\\quiz}.")
+    warning("Quiz should start with a { } tag and end with {/quiz}.")
+    return(NULL)
   }
   if (length(end) == 0) {
-    warning("Could not find end tag of quiz; should end with: {\\quiz}.")
+    warning("Could not find end tag of quiz; should end with: {/quiz}.")
+    return(NULL)
   }
   # Extract main quiz tag
-  quiz_tag <- quiz_lines[start]
+  quiz_tag <- quiz_lines[start[1]]
 
-  # Keep only those lines:
-  quiz_lines <- quiz_lines[(start + 1):(end - 1)]
+  # Keep only those lines between the tags
+  quiz_lines <- quiz_lines[(start[1] + 1):(end[1] - 1)]
 
-  return(list(
+  list(
     quiz_lines = quiz_lines,
     quiz_tag = quiz_tag
-  ))
+  )
 }
 
 #' Check Quiz Attributes
@@ -795,13 +983,13 @@ check_question <- function(question_df, quiz_name = NA, verbose = TRUE, ignore_c
     tot_ans_index <- question_start_index
   }
 
-  if (length(correct_answers) == 0 & length(fill_in) == 0) {
+  if (length(correct_answers) == 0 && length(fill_in) == 0) {
     cor_ans_msg <- paste0("No correct answers provided for ", quiz_identity)
     warning(cor_ans_msg)
     cor_ans_index <- question_start_index
   }
 
-  if (length(wrong_answers) == 0 & length(fill_in) == 0) {
+  if (length(wrong_answers) == 0 && length(fill_in) == 0) {
     inc_ans_msg <- paste0("No incorrect answer options provided for ", quiz_identity)
     warning(inc_ans_msg)
     inc_ans_index <- question_start_index
@@ -816,7 +1004,7 @@ check_question <- function(question_df, quiz_name = NA, verbose = TRUE, ignore_c
     question_meta <- extract_meta(tags)
 
     # Check the attributes
-    attr_msg <- check_quiz_question_attributes(question_df,
+    check_quiz_question_attributes(question_df,
       quiz_name = quiz_name
     )
 
@@ -828,16 +1016,12 @@ check_question <- function(question_df, quiz_name = NA, verbose = TRUE, ignore_c
           "choose-answers number is greater than the number of answers provided in: ",
           quiz_identity
         )
-        choos_ans_index <- question_start_index
         warning(choos_ans_msg)
       }
     } else {
       # If choose answers isn't used then put NA for this check
       choos_ans_msg <- NA
     }
-  } else {
-    # If attributes weren't declared then put NA for this check
-    attr_msg <- NA
   }
   #### Check answer formats:
   exclam_index <- question_df %>%
